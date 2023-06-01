@@ -50,7 +50,11 @@ public final class RunConfigurationFlagsState implements RunConfigurationState {
     this.fieldLabel = fieldLabel;
   }
 
-  /** Flags ready to be used directly as args for external processes. */
+  /**
+   * Flags processed, macro-expanded and ready to be used directly as args. Don't be fooled by the
+   * name. This RunConfigurationState is also used for Blaze/Bazel flags to be set in Run
+   * Configurations, and this is the method used to access those flags.
+   */
   public List<String> getFlagsForExternalProcesses() {
     List<String> processedFlags =
         flags.stream()
