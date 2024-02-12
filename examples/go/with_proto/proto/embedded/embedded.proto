@@ -1,0 +1,6 @@
+syntax = "proto3";
+package embedded;
+
+message Message {
+  string value = 1;
+}

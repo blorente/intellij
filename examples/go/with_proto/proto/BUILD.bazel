@@ -10,17 +10,18 @@ proto_library(
 )
 
 go_proto_library(
-    name = "fooproto_go_proto",
+    name = "fooproto_go_proto_transitive",
     compilers = ["@io_bazel_rules_go//proto:go_grpc"],
     importpath = "github.com/bazelbuild/intellij/examples/go/with_proto/proto",
     proto = ":fooproto_proto",
     visibility = ["//visibility:public"],
+    deps = ["//proto/embedded:embedded_go_proto"],
 )
 
 go_library(
     name = "proto",
     srcs = ["translators.go"],
-    embed = [":fooproto_go_proto"],
+    embed = [":fooproto_go_proto_transitive"],
     importpath = "github.com/bazelbuild/intellij/examples/go/with_proto/proto",
     visibility = ["//visibility:public"],
 )
