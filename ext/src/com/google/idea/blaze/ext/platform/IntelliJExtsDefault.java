@@ -13,47 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.idea.blaze.ext;
+package com.google.idea.blaze.ext.platform;
 
-import com.google.idea.blaze.ext.platform.IntelliJExtsDefault;
-import com.google.idea.blaze.ext.platform.IntelliJExtsMac;
-
+import com.google.idea.blaze.ext.IntelliJExtClient;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
+import io.netty.channel.epoll.EpollDomainSocketChannel;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
 /**
  * Static utility methods relating to {@link IntelliJExtClient} and {@link IntelliJExtTestServer}.
- * Delegates to platform-specific implementations.
+ * Provides platform-specific implementations to get ManagedChannel using the netty library for
+ * Linux.
  */
-public final class IntelliJExts {
-
-  private static boolean isMac() {
-    return System.getProperty("os.name").equals("Mac OS X");
-  }
-
+public final class IntelliJExtsDefault {
   public static EventLoopGroup createGroup(DefaultThreadFactory threadFactory) {
-    if (IntelliJExts.isMac()) {
-      return IntelliJExtsMac.createGroup(threadFactory);
-    } else {
-      return IntelliJExtsDefault.createGroup(threadFactory);
-    }
+    return new EpollEventLoopGroup(threadFactory);
   }
 
   public static Class<? extends Channel> getClientChannelType() {
-    if (IntelliJExts.isMac()) {
-      return IntelliJExtsMac.getClientChannelType();
-    } else {
-      return IntelliJExtsDefault.getClientChannelType();
-    }
+    return EpollDomainSocketChannel.class;
   }
 
   public static Class<? extends ServerChannel> getServerChannelType() {
-    if (IntelliJExts.isMac()) {
-      return IntelliJExtsMac.getServerChannelType();
-    } else {
-      return IntelliJExtsDefault.getServerChannelType();
-    }
+    return EpollServerDomainSocketChannel.class;
   }
+
+  private IntelliJExtsDefault() {}
 }

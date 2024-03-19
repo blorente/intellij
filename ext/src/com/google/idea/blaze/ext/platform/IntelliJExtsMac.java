@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.idea.blaze.ext.mac;
+package com.google.idea.blaze.ext.platform;
 
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -28,7 +28,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
  * com.google.idea.blaze.ext.IntelliJExtTestServer}. Provides platform-specific implementations to
  * get ManagedChannel using the netty library for Mac.
  */
-public final class IntelliJExts {
+public final class IntelliJExtsMac {
   public static EventLoopGroup createGroup(DefaultThreadFactory threadFactory) {
     return new KQueueEventLoopGroup(threadFactory);
   }

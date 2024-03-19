@@ -18,11 +18,11 @@ java_library(
         "src/com/google/idea/blaze/ext/IntelliJExtClient.java",
         "src/com/google/idea/blaze/ext/IntelliJExtServer.java",
         "src/com/google/idea/blaze/ext/IntelliJExtService.java",
+        "src/com/google/idea/blaze/ext/IntelliJExts.java",
         "src/com/google/idea/blaze/ext/StreamProcessor.java",
-    ] + select({
-        "@platforms//os:macos": ["src/com/google/idea/blaze/ext/mac/IntelliJExts.java"],
-        "//conditions:default": ["src/com/google/idea/blaze/ext/IntelliJExts.java"],
-    }),
+        "src/com/google/idea/blaze/ext/platform/IntelliJExtsDefault.java",
+        "src/com/google/idea/blaze/ext/platform/IntelliJExtsMac.java",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "//ext/proto:intellijext_java_grpc",
@@ -31,22 +31,20 @@ java_library(
         "@com_google_guava_guava//jar",
         "@io_grpc_grpc_core//jar",
         "@io_grpc_grpc_netty//jar",
-    ] + select({
-        "@platforms//os:macos": ["@io_netty_netty_transport_classes_kqueue//jar"],
-        "//conditions:default": [
-            "@io_netty_netty_transport_native_epoll//jar",
-            "@io_netty_netty_transport_classes_epoll//jar",
-        ],
-    }),
+        "@io_netty_netty_transport_classes_epoll//jar",
+        "@io_netty_netty_transport_classes_kqueue//jar",
+        "@io_netty_netty_transport_native_epoll//jar",
+    ],
 )
 
 java_binary(
     name = "IntelliJExtTestServer",
-    srcs = ["tests/com/google/idea/blaze/ext/IntelliJExtTestServer.java"] +
-           select({
-               "@platforms//os:macos": ["src/com/google/idea/blaze/ext/mac/IntelliJExts.java"],
-               "//conditions:default": ["src/com/google/idea/blaze/ext/IntelliJExts.java"],
-           }),
+    srcs = [
+        "tests/com/google/idea/blaze/ext/IntelliJExtTestServer.java",
+        "src/com/google/idea/blaze/ext/IntelliJExts.java",
+        "src/com/google/idea/blaze/ext/platform/IntelliJExtsDefault.java",
+        "src/com/google/idea/blaze/ext/platform/IntelliJExtsMac.java",
+    ],
     main_class = "com.google.idea.blaze.ext.IntelliJExtTestServer",
     deps = [
         "//ext/proto:intellijext_java_grpc",
@@ -56,11 +54,10 @@ java_binary(
         "@io_grpc_grpc_java//netty",
         "@io_netty_netty_common//jar",
         "@io_netty_netty_transport//jar",
+        "@io_netty_netty_transport_classes_kqueue//jar",
+        "@io_netty_netty_transport_native_epoll//jar",
         "@io_netty_netty_transport_native_unix_common//jar",
-    ] + select({
-        "@platforms//os:macos": ["@io_netty_netty_transport_classes_kqueue//jar"],
-        "//conditions:default": ["@io_netty_netty_transport_native_epoll//jar"],
-    }),
+    ],
 )
 
 java_test(
