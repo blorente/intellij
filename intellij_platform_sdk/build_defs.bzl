@@ -592,8 +592,20 @@ def no_mockito_extensions(name, jars, **kwargs):
             cmd = """
             cp "$<" "$@"
             chmod u+w "$@"
-            zip -d "$@" mockito-extensions/*
+            tmpdir=$$(mktemp -d)
+            zipper="$$(pwd)/$(execpath @bazel_tools//tools/zip:zipper)"
+            "$$zipper" x "$@" -d ".out"
+            mv ".out" "$$tmpdir"
+
+            pushd "$$tmpdir/.out"
+            rm -fr "mockito-extensions"
+            "$$zipper" cC "../out.jar" $$(find . -type f | sed 's:^./::')
+            popd
+
+            cp "$$tmpdir/out.jar" "$@"
+            chmod u+rw "$@"
             """,
+            tools = ["@bazel_tools//tools/zip:zipper"],
         )
         output_jars.append(output_jar_name)
 
